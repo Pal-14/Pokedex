@@ -3,6 +3,8 @@ let tableauFin = [];
 
 const searchInput = document.querySelector(".recherche-poke input");
 const listePoke = document.querySelector(".liste-poke");
+const chargement = document.querySelector('.loader');
+
 
 const types = {
   grass: "#78c850",
@@ -76,6 +78,8 @@ function fetchPokemonComplet(pokemon) {
     });
 }
 
+
+
 //Création des cartes
 
 function createCard(arr) {
@@ -86,7 +90,7 @@ function createCard(arr) {
     const txtCarte = document.createElement("h5");
     txtCarte.innerText = arr[i].name;
     const idCarte = document.createElement("p");
-    idCarte.innerText = `ID# ${arr[i].id}`;
+    idCarte.innerText = `N° ${arr[i].id}`;
     const imgCarte = document.createElement("img");
     imgCarte.src = arr[i].pic;
 
@@ -95,6 +99,58 @@ function createCard(arr) {
     carte.appendChild(idCarte);
 
     listePoke.appendChild(carte);
+  }
+}
+
+// Scroll infini
+
+window.addEventListener("scroll", () => {
+  const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+
+  if (clientHeight + scrollTop >= scrollHeight - 20) {
+    AddPoke(6);
+  }
+});
+
+// index de base les 21 premiers pokémon que j'affiche
+let index = 21;
+
+// Fonction pour rajouter au scroll 6 nouveaux pokémons
+function AddPoke(nb) {
+  if (index > 151) {
+    return;
+  }
+  // Je rajoute au tableau les 6 nouveaux index 21 + nb(6)
+  const arrToAdd = allPokemon.slice(index, index + nb);
+  createCard(arrToAdd);
+  // pour ajouter correctement le + 6 à chaque fois
+  index += nb;
+}
+
+// Recherche
+
+searchInput.addEventListener("keyup", recherche);
+
+function recherche() {
+  if (index < 150) {
+    AddPoke(130);
+  }
+
+  let filter, allLi, titleValue, allTitles;
+  filter = searchInput.value.toUpperCase();
+  allLi = document.querySelectorAll('li');
+  allTitles = document.querySelectorAll('li > h5');
+  
+
+  for (i = 0; i < allLi.length; i++) {
+
+    titleValue = allTitles[i].innerText;
+
+    if (titleValue.toUpperCase().indexOf(filter) > -1) {
+      allLi[i].style.display = "flex";
+    } else {
+      allLi[i].style.display = "none";
+    }
   }
 }
 
